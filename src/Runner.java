@@ -65,7 +65,6 @@ public class Runner implements ActionListener {
 		} else {
 			
 			try {
-
 				Class.forName("com.mysql.jdbc.Driver");
 				Connection con = DriverManager.getConnection("jdbc:mysql://localhost/QA", "root", "");
 				Statement st = con.createStatement();
