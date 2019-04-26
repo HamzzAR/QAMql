@@ -26,7 +26,7 @@ public class MultipleWindows{
 		
 		WindowEvents e = new WindowEvents();
 		f.addWindowListener(e);
-		
+		 
 		b1.addActionListener(new ActionListener() {
 
 			@Override
