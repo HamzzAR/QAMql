@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class MultipleWindows {
+public class MultipleWindows{
 	Frame dataentryf,dataviewf;
 	ResultSet rec;
 	TextField t1,t2,t3,t4,t5;
@@ -23,6 +23,9 @@ public class MultipleWindows {
 		Button b1 = new Button("Data Entry");
 		Button b2 = new Button("Data View");
 		f.setLayout(new GridLayout(2,1));
+		
+		WindowEvents e = new WindowEvents();
+		f.addWindowListener(e);
 		
 		b1.addActionListener(new ActionListener() {
 
@@ -154,7 +157,7 @@ public class MultipleWindows {
 					result = "Pass";
 				}else{
 					result = "Fail";
-				}
+				} 
 				
 				t1.setText(Integer.toString(regno));
 				t2.setText(name);
