@@ -70,8 +70,7 @@ public class NewAccountWin {
 			}
 		});
 		
-		
-	
+
 		createaccountb.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -121,18 +120,33 @@ public class NewAccountWin {
 			rs = st.executeQuery("SELECT MAX(SUBSTRING(acno, 3, 5)) FROM bank");
 			if(rs.next()){
 				String maxNo = rs.getString(1);
-				regNo+=Integer.parseInt(maxNo)+1;
+				if(Integer.parseInt(maxNo)>=99){
+					regNo+=Integer.parseInt(maxNo)+1;
+				}else if(Integer.parseInt(maxNo)>=9){
+					regNo+="0"+(Integer.parseInt(maxNo)+1);
+				}else{
+					regNo+="00"+(Integer.parseInt(maxNo)+1);	
+				}
 			}
+			System.out.println(regNo);
 			
 			st.executeUpdate("insert into bank values('" + regNo+ "','" + name + "','" + address + "')");
 			JOptionPane.showMessageDialog(f, "Account Successfully Created");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+		
+		} catch(java.lang.NumberFormatException e){
+			try {
+				regNo+="001";
+				st.executeUpdate("insert into bank values('" + regNo+ "','" + name + "','" + address + "')");
+				JOptionPane.showMessageDialog(f, "Account Successfully Created, First Record");
+		
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
-		
-		
-		
+
 	}
 
 }
