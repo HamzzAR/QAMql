@@ -9,6 +9,7 @@ import javax.swing.*;
 
 public class Bank {
 	DB db;
+	JFrame win;
 	
 	public static void main(String[] args) {
 		new Bank();
@@ -17,7 +18,7 @@ public class Bank {
 	
 	public Bank() {
 		db = new DB();
-		JFrame win = new JFrame();
+		win = new JFrame();
 		win.setTitle("Bank Management System");
 		
 		JMenuBar menubar = new JMenuBar();
@@ -55,6 +56,14 @@ public class Bank {
 			}
 		});
 		
+		mbalance.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkBalance();
+			}
+		});
+		
 		mbank.add(maccount);
 		mbank.add(mdeposit);
 		mbank.add(mwithdraw);
@@ -67,6 +76,17 @@ public class Bank {
 		win.setLocation(300, 300);
 		win.setSize(600, 300);
 		win.setVisible(true);
+	}
+	
+	public void checkBalance() {
+		String aNo = JOptionPane.showInputDialog(win,"Please enter your account number");   
+		UpdateAccountWin ua = new UpdateAccountWin(db);
+		int balance = ua.getCurrentBalance(aNo);
+		if(balance != 0){
+			JOptionPane.showMessageDialog(win, "Your current balance is: "+balance,"Info",JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		
 	}
 
 }
