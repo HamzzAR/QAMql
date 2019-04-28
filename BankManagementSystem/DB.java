@@ -6,11 +6,12 @@ import java.sql.Statement;
 public class DB {
 	ResultSet rec;
 	Statement st;
+	Connection con;
 
 	public DB() {
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver"); //load the driver
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:8889/bank","root","012345"); //connect to db
+		con = DriverManager.getConnection("jdbc:mysql://localhost:8889/bank","root","012345"); //connect to db
 		st = con.createStatement();
 
 		}catch (Exception e) {
@@ -21,6 +22,10 @@ public class DB {
 	
 	public Statement getStatement() {
 		return st;
+	}
+	
+	public Connection getConnectObj(){
+		return con;
 	}
 
 }

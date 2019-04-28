@@ -22,8 +22,10 @@ public class NewAccountWin {
 	JButton createaccountb;
 	JPanel topp,bottomp;
 	JFrame f;
+	DB db;
 
-	public NewAccountWin() {
+	public NewAccountWin(DB d) {
+		db = d;
 		namef = new JTextField();
 		addressf = new JTextField();
 		acctypel = new JLabel("Account Type");
@@ -92,6 +94,7 @@ public class NewAccountWin {
 		f.add(bottomp,BorderLayout.CENTER);
 		f.add(createaccountb,BorderLayout.SOUTH);
 		
+		f.setLocation(300, 320);
 		f.setSize(500, 300);
 		f.setVisible(true);
 		
@@ -101,7 +104,6 @@ public class NewAccountWin {
 		String name = namef.getText();
 		String address = addressf.getText();
 		String regNo = "";
-		DB db = new DB();
 
 		if(currentb.isSelected()){
 			regNo+="C";
