@@ -24,6 +24,7 @@ public class UpdateAccountWin {
 	DB db;
 	boolean found;
 	String operation;
+	int currentBalance;
 	
 	public UpdateAccountWin(DB d){
 		db = d;
@@ -74,7 +75,7 @@ public class UpdateAccountWin {
 				}else{
 					JOptionPane.showMessageDialog(f, "Error! Account not found","Error",JOptionPane.ERROR_MESSAGE);
 				}
-				cball.setText(Integer.toString(getCurrentBalance(accnof.getText())));
+				cball.setText(Integer.toString(getCurrentBalance(accnof.getText(),false)));
 			}
 		});
 		
@@ -82,7 +83,7 @@ public class UpdateAccountWin {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				updateAccount();
-				cball.setText(Integer.toString(getCurrentBalance(accnof.getText())));
+				cball.setText(Integer.toString(getCurrentBalance(accnof.getText(),false)));
 			}
 		});
 		
@@ -113,7 +114,7 @@ public class UpdateAccountWin {
 					isInserted = st.executeUpdate("INSERT INTO deposit VALUES ('"+accnof.getText()+"', '"+Integer.parseInt(newbalf.getText())+"', now())");
 					JOptionPane.showMessageDialog(f, "Successful Transaction!!");
 				}else{
-					if(getCurrentBalance(accnof.getText()) >= Integer.parseInt(newbalf.getText())){
+					if(getCurrentBalance(accnof.getText(),false) >= Integer.parseInt(newbalf.getText())){
 						isInserted = st.executeUpdate("INSERT INTO withdraw VALUES ('"+accnof.getText()+"', '"+Integer.parseInt(newbalf.getText())+"', now())");
 						JOptionPane.showMessageDialog(f, "Successful Transaction!!");
 					}else{
@@ -134,45 +135,65 @@ public class UpdateAccountWin {
 		
 	}
 	
-	public int getCurrentBalance(String aNo){
-		ResultSet rs,rs2;
-		int depositM = 0;
-		int withdrawM = 0;
-		int currentBalance = 0;
+	public int getCurrentBalance(String aNo, boolean thiss){
 		
-		if(searchAccount(aNo)){
-			 try {
-			    	String sql = "SELECT SUM(amount) FROM deposit WHERE acno = ?";
-					String sql2 = "SELECT SUM(amount) FROM withdraw WHERE acno = ?";
-			    	PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
-			    	PreparedStatement upd2 = db.getConnectObj().prepareStatement(sql2);
-					upd.setString(1, aNo);
-					upd2.setString(1, aNo);
-					rs = upd.executeQuery();
-					rs2 = upd2.executeQuery();
-					if(rs.next() && rs2.next()){
-						depositM = rs.getInt(1);
-						withdrawM = rs2.getInt(1);
-						currentBalance = depositM - withdrawM;
-					
-					}else if(rs.next()){
-						depositM = rs.getInt(1);
-						currentBalance = depositM;
-					}else{
-						JOptionPane.showMessageDialog(f, "Account has 0 withdraws","Alert",JOptionPane.WARNING_MESSAGE);
-						System.out.println("in else "+currentBalance);
-					}
-					
+		currentBalance = 0;
+		if(thiss){
+		    try {
+		    	ResultSet rs;
+		    	String sql = "SELECT * FROM bank WHERE acno = ?";
+				PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
+			    upd.setString(1, aNo);
+				rs = upd.executeQuery();
+				if(rs.next()){
+					getBalance(aNo);
 				}
-			    catch (Exception e) {
-					JOptionPane.showMessageDialog(f, "Exception! Something went wrong","Alert",JOptionPane.WARNING_MESSAGE);
-					e.printStackTrace();
-					System.out.println("in Exception "+currentBalance);
-					return currentBalance;
-				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			if(searchAccount(aNo)){
+				 getBalance(aNo);
+			}
 		}
 	    
 	    return currentBalance;
+	}
+	
+	public void getBalance(String aNo){
+		ResultSet rs,rs2;
+		int depositM = 0;
+		int withdrawM = 0;
+		try {
+	    	String sql = "SELECT SUM(amount) FROM deposit WHERE acno = ?";
+			String sql2 = "SELECT SUM(amount) FROM withdraw WHERE acno = ?";
+	    	PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
+	    	PreparedStatement upd2 = db.getConnectObj().prepareStatement(sql2);
+			upd.setString(1, aNo);
+			upd2.setString(1, aNo);
+			rs = upd.executeQuery();
+			rs2 = upd2.executeQuery();
+			if(rs.next() && rs2.next()){
+				depositM = rs.getInt(1);
+				withdrawM = rs2.getInt(1);
+				currentBalance = depositM - withdrawM;
+			
+			}else if(rs.next()){
+				depositM = rs.getInt(1);
+				currentBalance = depositM;
+			}else{
+				JOptionPane.showMessageDialog(f, "Account has 0 withdraws","Alert",JOptionPane.WARNING_MESSAGE);
+				System.out.println("in else "+currentBalance);
+			}
+			
+		}
+	    catch (Exception e) {
+			JOptionPane.showMessageDialog(f, "Exception! Something went wrong","Alert",JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+			System.out.println("in Exception "+currentBalance);
+		}
 	}
 	
 	public boolean searchAccount(String aNo) {
