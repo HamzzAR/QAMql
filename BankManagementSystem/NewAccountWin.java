@@ -76,7 +76,14 @@ public class NewAccountWin {
 		createaccountb.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveAccount();	
+				if(namef.getText().equals("") || addressf.getText().equals("")
+						|| !currentb.isSelected() && !savingb.isSelected() || !maleb.isSelected()
+						&& !femaleb.isSelected()){
+					JOptionPane.showMessageDialog(f, "You CANNOT leave any field blank!","Error",JOptionPane.ERROR_MESSAGE);
+				}else {
+					saveAccount();	
+				}
+			
 			}
 		});
 		
@@ -130,10 +137,9 @@ public class NewAccountWin {
 					regNo+="00"+(Integer.parseInt(maxNo)+1);	
 				}
 			}
-			System.out.println(regNo);
 			
 			st.executeUpdate("insert into bank values('" + regNo+ "','" + name + "','" + address + "')");
-			JOptionPane.showMessageDialog(f, "Account Successfully Created");
+			JOptionPane.showMessageDialog(f, "Account Successfully Created: "+regNo);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -3,6 +3,7 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
 
 import javax.swing.*;
 
@@ -29,6 +30,7 @@ public class Bank {
 		JMenuItem mdeposit = new JMenuItem("Deposit Money"); // create menu items
 		JMenuItem mwithdraw = new JMenuItem("Withdraw Money"); //
 		JMenuItem mbalance = new JMenuItem("Check Balance"); //
+		JMenuItem mDeleteAcc = new JMenuItem("Delete Account"); //
 		
 		maccount.addActionListener(new ActionListener(){    //when maccount button is clicked
 			@Override
@@ -64,18 +66,22 @@ public class Bank {
 		mbank.add(mdeposit);   //add menu items to menu
 		mbank.add(mwithdraw);
 		mbank.add(mbalance);
+		mbank.add(mDeleteAcc);
+		
 		
 		menubar.add(mbank);  //add menu to menuabr
 		
 		win.setJMenuBar(menubar);  //set window menu ba
 		
-		win.setLocation(300, 300);
-		win.setSize(600, 300);
-		win.setVisible(true);
+		win.setLocation(300, 300); //set the window location - where it appears on the screen
+		win.setSize(600, 300); // set how big the window is
+		win.setVisible(true); // make it visible
 	}
 	
+	//ask user for account number
+	//call getCurrentBalance() from UpdateAccountWin class to give you the current balance for that account
 	public void checkBalance() {
-		String aNo = JOptionPane.showInputDialog(win,"Please enter your account number");   
+		String aNo = JOptionPane.showInputDialog(win,"Please enter your account number");  
 		UpdateAccountWin ua = new UpdateAccountWin(db);
 		int balance = ua.getCurrentBalance(aNo,true);
 		if(balance != 0){
@@ -86,5 +92,6 @@ public class Bank {
 		
 		
 	}
+
 
 }

@@ -26,6 +26,7 @@ public class UpdateAccountWin {
 	String operation;
 	int currentBalance;
 	
+	//constructor is overloaded as this one is being used for a different purpose from the Bank class
 	public UpdateAccountWin(DB d){
 		db = d;
 		namel = new JLabel("Name",SwingConstants.CENTER);
@@ -38,8 +39,9 @@ public class UpdateAccountWin {
 		db = d;
 		operation = oper;
 		f = new JFrame();
-		f.setLayout(new GridLayout(10,3));
+		f.setLayout(new GridLayout(10,3)); //set the layout for the Window to grid layout 10 by 3
 		
+		//Initialise the labels
 		accnol = new JLabel("Account No",SwingConstants.CENTER);
 		namel = new JLabel("Name",SwingConstants.CENTER);
 		addressl = new JLabel("Address",SwingConstants.CENTER);
@@ -48,7 +50,9 @@ public class UpdateAccountWin {
 		cbalancel = new JLabel("Current Balance",SwingConstants.CENTER);
 		cball = new JLabel("");
 		moneyl = new JLabel("",SwingConstants.CENTER);
-
+		
+		//if user has clicked the deposit button 
+		//then set the window title accordingly etc.
 		if(operation.equals("deposit")){
 			f.setTitle("Deposit Money into Account");
 			moneyl.setText("Deposit Money");
@@ -57,6 +61,7 @@ public class UpdateAccountWin {
 			moneyl.setText("Withdraw Money");
 		}
 		
+		//Initialise the Text fields
 		accnof = new JTextField();
 		namef = new JTextField();
 		addressf = new JTextField();
@@ -67,6 +72,8 @@ public class UpdateAccountWin {
 		searchb = new JButton("Search");
 		saveb = new JButton("Save");
 		
+		//if the search button is clicked
+		//search for the account and extract details for that account
 		searchb.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -75,10 +82,13 @@ public class UpdateAccountWin {
 				}else{
 					JOptionPane.showMessageDialog(f, "Error! Account not found","Error",JOptionPane.ERROR_MESSAGE);
 				}
-				cball.setText(Integer.toString(getCurrentBalance(accnof.getText(),false)));
+				cball.setText(Integer.toString(getCurrentBalance(accnof.getText(),false))); //set the current balance label with the current balance from user account
 			}
 		});
 		
+		//if the save button is clicked
+		//call the updateAccount to save data into 
+		//either withdraw table or deposit table
 		saveb.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -87,6 +97,7 @@ public class UpdateAccountWin {
 			}
 		});
 		
+		//add the components to the window
 		f.add(accnol); f.add(accnof); f.add(searchb);
 		f.add(namel); f.add(namef); f.add(new JLabel(""));
 		f.add(addressl); f.add(addressf); f.add(new JLabel(""));
@@ -107,14 +118,16 @@ public class UpdateAccountWin {
 	public void updateAccount(){
 		Statement st = db.getStatement();
 		
-		if(searchAccount(accnof.getText())){
+		if(searchAccount(accnof.getText())){  //search for the user account before doing any calculations
 			try {
 				int isInserted = 0;
 				if(operation.equals("deposit")){
+					//insert date into deposit table
 					isInserted = st.executeUpdate("INSERT INTO deposit VALUES ('"+accnof.getText()+"', '"+Integer.parseInt(newbalf.getText())+"', now())");
 					JOptionPane.showMessageDialog(f, "Successful Transaction!!");
 				}else{
-					if(getCurrentBalance(accnof.getText(),false) >= Integer.parseInt(newbalf.getText())){
+					if(getCurrentBalance(accnof.getText(),false) >= Integer.parseInt(newbalf.getText())){ //only allow user to withdraw if he has enough money in his account
+						//insert date into withdraw table
 						isInserted = st.executeUpdate("INSERT INTO withdraw VALUES ('"+accnof.getText()+"', '"+Integer.parseInt(newbalf.getText())+"', now())");
 						JOptionPane.showMessageDialog(f, "Successful Transaction!!");
 					}else{
@@ -122,6 +135,7 @@ public class UpdateAccountWin {
 					}					
 				}
 				
+				//if data inserted then show an appropriate message to the user
 				if(isInserted < 0 && operation.equals("deposit")){
 					JOptionPane.showMessageDialog(f, "Unsuccessful Deposit Transaction!!","Error",JOptionPane.ERROR_MESSAGE);
 				}else if(isInserted < 0 && operation.equals("withdraw")){
@@ -135,8 +149,8 @@ public class UpdateAccountWin {
 		
 	}
 	
+	//get the current balance for the aNo account
 	public int getCurrentBalance(String aNo, boolean thiss){
-		
 		currentBalance = 0;
 		if(thiss){
 		    try {
@@ -145,8 +159,8 @@ public class UpdateAccountWin {
 				PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
 			    upd.setString(1, aNo);
 				rs = upd.executeQuery();
-				if(rs.next()){
-					getBalance(aNo);
+				if(rs.next()){           //check if the account exists before getting the balance
+					getBalance(aNo);  // get the balance
 				}
 				
 			} catch (SQLException e) {
@@ -167,20 +181,20 @@ public class UpdateAccountWin {
 		int depositM = 0;
 		int withdrawM = 0;
 		try {
-	    	String sql = "SELECT SUM(amount) FROM deposit WHERE acno = ?";
-			String sql2 = "SELECT SUM(amount) FROM withdraw WHERE acno = ?";
+	    	String sql = "SELECT SUM(amount) FROM deposit WHERE acno = ?"; //get the sum of all the amount records in the db for aNo account
+			String sql2 = "SELECT SUM(amount) FROM withdraw WHERE acno = ?"; // same here from withdraw tabel
 	    	PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
 	    	PreparedStatement upd2 = db.getConnectObj().prepareStatement(sql2);
 			upd.setString(1, aNo);
 			upd2.setString(1, aNo);
 			rs = upd.executeQuery();
 			rs2 = upd2.executeQuery();
-			if(rs.next() && rs2.next()){
+			if(rs.next() && rs2.next()){ //if both tables return something
 				depositM = rs.getInt(1);
 				withdrawM = rs2.getInt(1);
 				currentBalance = depositM - withdrawM;
 			
-			}else if(rs.next()){
+			}else if(rs.next()){  // if deposit table returns something
 				depositM = rs.getInt(1);
 				currentBalance = depositM;
 			}else{
@@ -196,6 +210,7 @@ public class UpdateAccountWin {
 		}
 	}
 	
+	//search for aNo account
 	public boolean searchAccount(String aNo) {
 		found = false;
 		ResultSet rs;
