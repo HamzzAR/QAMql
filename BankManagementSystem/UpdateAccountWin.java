@@ -215,15 +215,15 @@ public class UpdateAccountWin {
 		found = false;
 		ResultSet rs;
 		try {
-			String sql = "SELECT * FROM bank WHERE acno = ?";
+			String sql = "SELECT * FROM bank WHERE acno = ?"; //get the rows from bank where account number = aNo 
 			PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
 		    upd.setString(1, aNo);
 		    rs = upd.executeQuery();
 			if(rs.next()){
-				namef.setText(rs.getString(2));
-				addressf.setText(rs.getString(3));
-				if(rs.getString(1).substring(0,1).equals("C")){
-					acctypef.setText("Current");
+				namef.setText(rs.getString(2)); //get the name and add it to the fields
+				addressf.setText(rs.getString(3)); 
+				if(rs.getString(1).substring(0,1).equals("C")){ //if the first char of the acno = C then 
+					acctypef.setText("Current");				// set the account type to Current
 				} else if(rs.getString(1).substring(0,1).equals("S")){
 					acctypef.setText("Saving");
 				}
@@ -232,7 +232,7 @@ public class UpdateAccountWin {
 					genderf.setText("Male");
 				} else if(rs.getString(1).substring(1,2).equals("F")){
 					genderf.setText("Female");
-				}
+				} 
 				found = true;
 			}else{
 				found = false;

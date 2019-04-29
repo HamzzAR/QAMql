@@ -76,6 +76,7 @@ public class NewAccountWin {
 		createaccountb.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// if any of the fields are empty then don't save account
 				if(namef.getText().equals("") || addressf.getText().equals("")
 						|| !currentb.isSelected() && !savingb.isSelected() || !maleb.isSelected()
 						&& !femaleb.isSelected()){
@@ -111,7 +112,8 @@ public class NewAccountWin {
 		String name = namef.getText();
 		String address = addressf.getText();
 		String regNo = "";
-
+		
+		//add the char to regNo according to what is selected
 		if(currentb.isSelected()){
 			regNo+="C";
 		}else if(savingb.isSelected()){
@@ -126,15 +128,15 @@ public class NewAccountWin {
 		Statement st = db.getStatement();
 		ResultSet rs;
 		try {
-			rs = st.executeQuery("SELECT MAX(SUBSTRING(acno, 3, 5)) FROM bank");
+			rs = st.executeQuery("SELECT MAX(SUBSTRING(acno, 3, 5)) FROM bank"); //get the max number from bank from acno last 3 chars 
 			if(rs.next()){
 				String maxNo = rs.getString(1);
-				if(Integer.parseInt(maxNo)>=99){
-					regNo+=Integer.parseInt(maxNo)+1;
-				}else if(Integer.parseInt(maxNo)>=9){
+				if(Integer.parseInt(maxNo)>=99){  //if maxNo >= 99 then we dont need to add any 0s before it
+					regNo+=Integer.parseInt(maxNo)+1; //because we can only have a 3 digit number
+				}else if(Integer.parseInt(maxNo)>=9){  // if its a 2 digit number add 1 zero before it
 					regNo+="0"+(Integer.parseInt(maxNo)+1);
 				}else{
-					regNo+="00"+(Integer.parseInt(maxNo)+1);	
+					regNo+="00"+(Integer.parseInt(maxNo)+1); // if its a 1 digit number add 2 zero before it
 				}
 			}
 			
@@ -144,6 +146,7 @@ public class NewAccountWin {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		
+			//catch number format exception and add the fist record
 		} catch(java.lang.NumberFormatException e){
 			try {
 				regNo+="001";
