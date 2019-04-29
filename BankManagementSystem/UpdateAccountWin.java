@@ -51,6 +51,7 @@ public class UpdateAccountWin {
 		cball = new JLabel("");
 		moneyl = new JLabel("",SwingConstants.CENTER);
 		
+		
 		//if user has clicked the deposit button 
 		//then set the window title accordingly etc.
 		if(operation.equals("deposit")){
@@ -68,6 +69,11 @@ public class UpdateAccountWin {
 		acctypef = new JTextField();
 		genderf = new JTextField();
 		newbalf = new JTextField();
+		
+		namef.setEditable(false);
+		addressf.setEditable(false);
+		acctypef.setEditable(false);
+		genderf.setEditable(false);
 		
 		searchb = new JButton("Search");
 		saveb = new JButton("Save");
