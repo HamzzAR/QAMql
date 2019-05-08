@@ -11,8 +11,8 @@ public class DB {
 	public DB() {
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver"); //load the driver
-		//con = DriverManager.getConnection("jdbc:mysql://localhost:8889/bank","root","012345"); //connect to db -- for mac
-		con = DriverManager.getConnection("jdbc:mysql://localhost/bank","root",""); //connect to db   -- for windows
+		con = DriverManager.getConnection("jdbc:mysql://localhost:8889/bank","root","012345"); //connect to db -- for mac
+		//con = DriverManager.getConnection("jdbc:mysql://localhost/bank","root",""); //connect to db   -- for windows
 		st = con.createStatement();
 
 		}catch (Exception e) {

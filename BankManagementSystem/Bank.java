@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -62,6 +64,17 @@ public class Bank {
 			}
 		});
 		
+		mDeleteAcc.addActionListener(new ActionListener(){    //when check balance buttton is clicked
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					deleteAccount();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 		mbank.add(maccount);
 		mbank.add(mdeposit);   //add menu items to menu
 		mbank.add(mwithdraw);
@@ -76,6 +89,30 @@ public class Bank {
 		win.setLocation(300, 300); //set the window location - where it appears on the screen
 		win.setSize(600, 300); // set how big the window is
 		win.setVisible(true); // make it visible
+	}
+	
+	public void deleteAccount() throws SQLException {
+		ResultSet rs;
+		String aNo = JOptionPane.showInputDialog(win,"Please enter your account number");  
+    	String sql = "DELETE FROM bank WHERE acno = ?";
+    	String sql2 = "DELETE FROM deposit WHERE acno = ?";
+    	String sql3 = "DELETE FROM withdraw WHERE acno = ?";
+		PreparedStatement upd = db.getConnectObj().prepareStatement(sql);
+		PreparedStatement upd2 = db.getConnectObj().prepareStatement(sql2);
+		PreparedStatement upd3 = db.getConnectObj().prepareStatement(sql3);
+	    upd.setString(1, aNo);
+	    upd2.setString(1, aNo);
+	    upd3.setString(1, aNo);
+		int isDeleted = upd.executeUpdate();
+		int isDeleted2 = upd2.executeUpdate();
+		int isDeleted3 = upd3.executeUpdate();
+		if(isDeleted < 1 && isDeleted2 < 1 && isDeleted3 < 1){
+			JOptionPane.showMessageDialog(win, "Account doesn't exist","Error",JOptionPane.ERROR_MESSAGE);
+		}
+		else{
+			JOptionPane.showMessageDialog(win, "Account successfully deleted","Info",JOptionPane.INFORMATION_MESSAGE);
+		}
+
 	}
 	
 	//ask user for account number
